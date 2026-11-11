@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Политика конфиденциальности — AI Assistant</title>
+<style>
+  :root {
+    --text: #e5e5ea;
+    --text-dim: #8e8e93;
+    --bg: #0d0d12;
+    --card-bg: #17171d;
+    --border: #2c2c33;
+    --accent: #f26419;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 16px/1.6 system-ui, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+  .updated {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0 0 40px;
+  }
+  h2 {
+    font-size: 19px;
+    margin: 36px 0 12px;
+  }
+  p, li {
+    color: #d1d1d6;
+  }
+  ul {
+    padding-left: 20px;
+  }
+  li {
+    margin-bottom: 8px;
+  }
+  code {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 14px;
+  }
+  a {
+    color: var(--accent);
+  }
+  .back {
+    display: inline-block;
+    margin-top: 48px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Политика конфиденциальности</h1>
+  <p class="updated">Обновлено: 19 июля 2026</p>
+
+  <p>Эта политика описывает, какие данные собирает и как использует Telegram-бот <strong>AI Assistant</strong> (<a href="https://t.me/Minem_AI_Assistant_bot" target="_blank" rel="noopener">@Minem_AI_Assistant_bot</a>), включая мини-приложение (Mini App) с календарём.</p>
+
+  <h2>Какие данные мы собираем</h2>
+  <ul>
+    <li><strong>Профиль Telegram:</strong> идентификатор, имя, username — передаётся автоматически при первом обращении к боту.</li>
+    <li><strong>Содержание сообщений:</strong> текст и голосовые сообщения, которые вы отправляете боту. Голосовые сообщения распознаются в текст сервисом преобразования речи и не сохраняются как аудиофайлы.</li>
+    <li><strong>Данные, которые вы вводите явно:</strong> задачи, заметки, факты о себе, контакты и записи о встречах с ними — всё, что вы просите ассистента запомнить или создать.</li>
+    <li><strong>Данные Google Calendar</strong> — только если вы сами подключили Google-аккаунт (см. раздел ниже).</li>
+  </ul>
+
+  <h2>Как мы используем данные</h2>
+  <ul>
+    <li>Чтобы выполнять то, что вы просите: создавать задачи, напоминать о них, вести список дел, отвечать на вопросы.</li>
+    <li>Текст ваших сообщений передаётся стороннему поставщику языковой модели (LLM) для генерации ответа — это необходимо для работы ассистента как такового. Поставщик обрабатывает запрос и не используется нами для какой-либо другой цели, кроме получения ответа.</li>
+    <li>Мы не используем ваши данные для рекламы и не продаём их третьим лицам.</li>
+  </ul>
+
+  <h2>Доступ к Google Calendar</h2>
+  <p>Если вы подключаете Google-аккаунт, мы запрашиваем только один разрешение — <code>calendar.events</code> (создание, чтение и изменение событий календаря). Мы не запрашиваем доступ к Gmail, Google Диску или любым другим данным вашего Google-аккаунта.</p>
+  <ul>
+    <li>Доступ к календарю используется исключительно для того, чтобы по вашей просьбе создать событие или показать список ближайших событий.</li>
+    <li>Данные календаря не передаются третьим лицам и не используются ни для чего, кроме прямого ответа на ваш запрос.</li>
+    <li>Токены доступа хранятся в зашифрованном виде на нашем сервере.</li>
+    <li>Отключить доступ можно в любой момент через настройки вашего Google-аккаунта (<a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>) — после этого мы прекращаем любые обращения к вашему календарю.</li>
+  </ul>
+  <p>Использование и передача данных, полученных через Google API, соответствует <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, включая требования Limited Use.</p>
+
+  <h2>Где хранятся данные</h2>
+  <p>Данные хранятся на выделенном сервере, который мы администрируем самостоятельно (не передаются облачным платформам общего доступа сверх используемых для отдельных функций, перечисленных выше).</p>
+
+  <h2>Ваши права</h2>
+  <ul>
+    <li>Вы можете в любой момент отключить Google-аккаунт (см. выше).</li>
+    <li>Вы можете запросить удаление ваших данных, написав на контактный адрес ниже.</li>
+  </ul>
+
+  <h2>Изменения политики</h2>
+  <p>Если политика существенно изменится, мы обновим дату в начале документа.</p>
+
+  <h2>Контакты</h2>
+  <p>По вопросам, связанным с обработкой данных, напишите боту <a href="https://t.me/Minem_AI_Assistant_bot">@Minem_AI_Assistant_bot</a> в Telegram.</p>
+
+  <a class="back" href="./">← На главную</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Тест-план: AI Assistant на DeepSeek</title>
+<style>
+  :root {
+    --bg: #0d0d12;
+    --card-bg: #17171d;
+    --card-bg-hover: #1c1c23;
+    --border: #2a2a32;
+    --text: #e8e8ec;
+    --text-dim: #8e8e97;
+    --text-faint: #5c5c64;
+    --accent: #f26419;
+    --accent-dim: #f2641933;
+    --ok: #4caf7d;
+    --ok-bg: #4caf7d1a;
+    --warn: #e0b341;
+    --warn-bg: #e0b3411a;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font: 15px/1.55 var(--sans);
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 100px;
+  }
+
+  header {
+    padding: 40px 0 24px;
+  }
+
+  .eyebrow {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-size: 26px;
+    line-height: 1.25;
+    margin: 0 0 10px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  /* Progress bar, sticky */
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+    margin-top: 8px;
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--card-bg);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+
+  .progress-count {
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .reset-btn:hover { color: var(--text-dim); border-color: var(--text-faint); }
+  .reset-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  section {
+    margin-top: 40px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .section-note {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    margin: 0 0 18px;
+    max-width: 62ch;
+  }
+
+  .priority-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .priority-tag.critical { background: var(--warn-bg); color: var(--warn); }
+
+  .case-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .case {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .case:hover { background: var(--card-bg-hover); }
+  .case.done {
+    background: var(--ok-bg);
+    border-color: color-mix(in srgb, var(--ok) 35%, var(--border));
+  }
+
+  .case input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--text-faint);
+    border-radius: 5px;
+    margin: 2px 0 0;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+    flex-shrink: 0;
+  }
+  .case input[type="checkbox"]:checked {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .case input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid #0d0d12;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .case input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .case-body { min-width: 0; }
+
+  .case-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    line-height: 1.4;
+  }
+  .case.done .case-title { color: var(--text-dim); text-decoration: line-through; text-decoration-color: var(--text-faint); }
+
+  .send-label {
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 8px 0 3px;
+  }
+
+  .phrase {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-radius: 6px;
+    padding: 7px 10px;
+    display: block;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  .expect-label {
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 10px 0 3px;
+  }
+
+  .expect {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .fail-tell {
+    font-size: 12.5px;
+    color: var(--warn);
+    margin: 6px 0 0;
+    line-height: 1.5;
+  }
+  .fail-tell::before { content: "⚠ "; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">AI Assistant · Приёмочное тестирование</p>
+  <h1>Тест-план для проверки бота на модели DeepSeek</h1>
+  <p class="lede">30 сценариев: повтор реальных багов, найденных на YandexGPT (должны быть исправлены), две новые фичи этой сессии и базовый прогон остальных модулей. Открой бота и проходи по порядку — отмечай галочкой, прогресс сохраняется в этом браузере.</p>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-row">
+    <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+    <span class="progress-count" id="count">0 / 33</span>
+    <button class="reset-btn" id="reset">Сбросить</button>
+  </div>
+</div>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Критичные регрессии<span class="priority-tag critical">обязательно</span></h2>
+  </div>
+  <p class="section-note">Каждый пункт — реальный баг, который живьём произошёл на YandexGPT и был перепроверен на DeepSeek. Если хоть один провалится здесь — модель регрессировала, сообщи сразу.</p>
+  <div class="case-list">
+
+    <label class="case">
+      <input type="checkbox" data-id="c1">
+      <div class="case-body">
+        <p class="case-title">1.1 — Расплывчатая ссылка на только что созданную задачу</p>
+        <p class="send-label">Отправь по очереди (с паузой в минуту)</p>
+        <code class="phrase">Задача на сегодня протереть пыль
+—через минуту—
+Эта задача выполнена</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Выполненной отмечается именно «протереть пыль», а не случайная другая задача из списка.</p>
+        <p class="fail-tell">Если закрылась не та задача — модель снова путает ссылки на «эту задачу».</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c2">
+      <div class="case-body">
+        <p class="case-title">1.2 — Дубликаты + одна команда на обе сразу</p>
+        <p class="send-label">Создай две похожие задачи, затем одним сообщением</p>
+        <code class="phrase">Первую (название А) переносим на завтра, а вторую (название Б) — удаляем</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Реально переносится одна и удаляется другая — без просто «хорошо, сделано» на словах.</p>
+        <p class="fail-tell">Если бот сказал «готово», но список задач не изменился — это тот самый галлюцинированный ответ.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c3">
+      <div class="case-body">
+        <p class="case-title">1.3 — Точное совпадение среди похожих названий</p>
+        <p class="send-label">Заведи 2 задачи с общим словом (например «тг» в обеих), затем отметь только одну</p>
+        <code class="phrase">«[точное название первой]» выполнено</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Закрывается именно названная задача, вторая (похожая) остаётся нетронутой.</p>
+        <p class="fail-tell">Если закрылась «соседняя по смыслу» задача — это прежний баг с подстрочным совпадением.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c4">
+      <div class="case-body">
+        <p class="case-title">1.4 — Голое «Да» без контекста</p>
+        <p class="send-label">После нескольких напоминаний подряд без ответа отправь просто</p>
+        <code class="phrase">Да</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Бот переспрашивает, какую именно задачу вы имеете в виду.</p>
+        <p class="fail-tell">Если бот уверенно перенёс/закрыл несколько задач без уточнения — это выдуманное действие без основания.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c5">
+      <div class="case-body">
+        <p class="case-title">1.5 — Опечатка/иное написание в названии</p>
+        <p class="send-label">Заведи задачу со сложным словом, затем отметь выполненной с небольшой опечаткой в названии</p>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Бот находит нужную задачу (возможно уточнив), а не сразу отвечает «не найдено».</p>
+        <p class="fail-tell">Флэт-отказ «не нашёл такую задачу» при почти правильном названии — старое поведение Yandex.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c6">
+      <div class="case-body">
+        <p class="case-title">1.6 — Порядок в списке дня</p>
+        <p class="send-label">Создай 3–4 задачи на завтра в разное время, в произвольном порядке, затем</p>
+        <code class="phrase">Какие у меня задачи на завтра?</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Список идёт по хронологии времени, не в порядке создания и не вразнобой.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c7">
+      <div class="case-body">
+        <p class="case-title">1.7 — Reply на сообщение бота <span style="color:var(--text-faint)">(новая фича)</span></p>
+        <p class="send-label">Через «Ответить» в Telegram ответь на любое сообщение со списком задач</p>
+        <code class="phrase">Покажи это же, но сначала время, потом название</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Бот понимает, к какому именно сообщению относится просьба, и отвечает по существу.</p>
+        <p class="fail-tell">Несвязанный/рандомный ответ означает, что reply-контекст не долетел.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c8">
+      <div class="case-body">
+        <p class="case-title">1.8 — Попытка vs реальное выполнение</p>
+        <p class="send-label">Про любую созданную задачу-звонок напиши</p>
+        <code class="phrase">Позвонил, никто не взял трубку</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Задача НЕ отмечается выполненной; бот предлагает перезвонить позже или перенести.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="c9">
+      <div class="case-body">
+        <p class="case-title">1.9 — Google Calendar не вызывается по умолчанию</p>
+        <p class="send-label">Не упоминая календарь явно</p>
+        <code class="phrase">Встреча с Пашей сегодня в 15:00, запиши</code>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Создаётся обычная задача (create_task), а не отдельное событие в Google Calendar.</p>
+      </div>
+    </label>
+
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Новые фичи этой сессии</h2>
+  </div>
+  <p class="section-note">Требуют дождаться реального времени срабатывания (утро/13:00/17:00) — их нельзя вызвать вручную из чата.</p>
+  <div class="case-list">
+
+    <label class="case">
+      <input type="checkbox" data-id="n1">
+      <div class="case-body">
+        <p class="case-title">2.1 — Утренний чек-ин показывает список и спрашивает приоритет</p>
+        <p class="expect-label">Ожидается (дождаться утреннего пуша)</p>
+        <p class="expect">Бот присылает полный список задач на сегодня и спрашивает «какая или какие в приоритете» — не выбирает сам.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="n2">
+      <div class="case-body">
+        <p class="case-title">2.2 — Ответ на вопрос про приоритет</p>
+        <p class="send-label">В ответ на утренний вопрос назови одну или несколько задач</p>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Бот подтверждает, что отметил именно названные задачи в приоритете на сегодня.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="n3">
+      <div class="case-body">
+        <p class="case-title">2.3 — Дневная проверка по приоритету (~13:00 и ~17:00)</p>
+        <p class="expect-label">Ожидается</p>
+        <p class="expect">Если приоритет был отмечен — приходит вопрос именно про эти задачи. Если ничего не отмечали — пуша не будет вообще (это правильно, не баг).</p>
+      </div>
+    </label>
+
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Базовый прогон остальных модулей</h2>
+  </div>
+  <p class="section-note">Не связано напрямую с найденными багами — общая проверка, что смена модели ничего не сломала в остальном функционале.</p>
+  <div class="case-list">
+
+    <label class="case">
+      <input type="checkbox" data-id="b1">
+      <div class="case-body">
+        <p class="case-title">3.1 — Задача с дедлайном и разовым напоминанием на время</p>
+        <code class="phrase">Напомни завтра в 9:15 выехать на встречу</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b2">
+      <div class="case-body">
+        <p class="case-title">3.2 — Задача голосовым сообщением</p>
+        <p class="expect">Наговори любую задачу голосом — должна создаться так же корректно, как текстом.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b3">
+      <div class="case-body">
+        <p class="case-title">3.3 — Перенос и удаление существующей задачи</p>
+        <code class="phrase">Перенеси «[название]» на пятницу
+—отдельно—
+Удали задачу «[название]»</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b4">
+      <div class="case-body">
+        <p class="case-title">3.4 — Фокус-сессия целиком: начать → завершить</p>
+        <code class="phrase">Погнали, фокус-сессия на час
+—позже—
+Сделал отчёт, всё получилось</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b5">
+      <div class="case-body">
+        <p class="case-title">3.5 — Фокус-сессия: начать → сорвать</p>
+        <code class="phrase">Не получилось поработать, отвлёкся на звонки</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b6">
+      <div class="case-body">
+        <p class="case-title">3.6 — Запомнить факт и вспомнить его позже</p>
+        <code class="phrase">Запомни, что у меня встреча каждый вторник с командой
+—в новом разговоре—
+Когда у меня встреча с командой?</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b7">
+      <div class="case-body">
+        <p class="case-title">3.7 — Заметка и поиск по смыслу</p>
+        <code class="phrase">Сохрани заметку: [любой текст на пару предложений]
+—позже, другими словами—
+Что я записывал про [тема заметки]?</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b8">
+      <div class="case-body">
+        <p class="case-title">3.8 — CRM: контакт + история общения</p>
+        <code class="phrase">Созвонился с Ромой из компании Ромашка, обсудили монтаж
+—позже—
+Расскажи про Рому</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b9">
+      <div class="case-body">
+        <p class="case-title">3.9 — Статистика по фокус-сессиям</p>
+        <code class="phrase">Как у меня с продуктивностью в последнее время?</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b10">
+      <div class="case-body">
+        <p class="case-title">3.10 — Намаз: включить и спросить время</p>
+        <code class="phrase">Включи напоминания о намазе, я в Казани
+—позже—
+Когда следующий намаз?</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b11">
+      <div class="case-body">
+        <p class="case-title">3.11 — Колесо баланса жизни</p>
+        <code class="phrase">Хочу пройти колесо баланса</code>
+        <p class="expect">Бот должен спросить оценку по каждой из 8 сфер по очереди, не все разом.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b12">
+      <div class="case-body">
+        <p class="case-title">3.12 — Долгосрочная цель</p>
+        <code class="phrase">Хочу через 5 лет выйти на доход в миллион в месяц</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b13">
+      <div class="case-body">
+        <p class="case-title">3.13 — Регулярное напоминание (каждый день)</p>
+        <code class="phrase">Каждый день в 21:00 спрашивай, что я сделал за день</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b14">
+      <div class="case-body">
+        <p class="case-title">3.14 — Интервальное напоминание (окно времени)</p>
+        <code class="phrase">Каждые полтора часа с 9 до 18 спрашивай, чем я занят</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b15">
+      <div class="case-body">
+        <p class="case-title">3.15 — Поиск в интернете</p>
+        <code class="phrase">Какая погода в Казани завтра?</code>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b16">
+      <div class="case-body">
+        <p class="case-title">3.16 — Эмоциональный разговор</p>
+        <code class="phrase">Мне тяжело, чувствую сильную тревогу последнее время</code>
+        <p class="expect">Один раз должен прозвучать честный дисклеймер «не психолог», без отказа обсуждать тему.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b17">
+      <div class="case-body">
+        <p class="case-title">3.17 — Явное создание события в Google Calendar</p>
+        <code class="phrase">Добавь именно в календарь встречу с 14:00 до 15:30 в четверг</code>
+        <p class="expect">Требует подключённого Google-аккаунта; проверяет, что явный запрос всё же создаёт календарное событие, а не просто задачу.</p>
+      </div>
+    </label>
+
+    <label class="case">
+      <input type="checkbox" data-id="b18">
+      <div class="case-body">
+        <p class="case-title">3.18 — Массовое завершение «всё на сегодня сделано»</p>
+        <code class="phrase">Все задачи на сегодня выполнены</code>
+        <p class="expect">Закрываются только сегодняшние задачи — не завтрашние, ни одна сегодняшняя не пропущена.</p>
+      </div>
+    </label>
+
+  </div>
+</section>
+
+<footer>
+  Прогресс хранится локально в этом браузере (localStorage) — на другом устройстве или после очистки данных сайта начнётся заново.<br>
+  Баг нашёлся — пришли точный текст сообщения и ответ бота, как в прошлых отчётах.
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'ai-assistant-testplan-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.case input[type="checkbox"]'));
+  var fill = document.getElementById('fill');
+  var count = document.getElementById('count');
+  var resetBtn = document.getElementById('reset');
+
+  function load() {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    try { return JSON.parse(raw); } catch (e) { return {}; }
+  }
+
+  function save(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function render() {
+    var state = load();
+    var done = 0;
+    boxes.forEach(function (box) {
+      var id = box.getAttribute('data-id');
+      var checked = !!state[id];
+      box.checked = checked;
+      box.closest('.case').classList.toggle('done', checked);
+      if (checked) done++;
+    });
+    fill.style.width = (done / boxes.length * 100) + '%';
+    count.textContent = done + ' / ' + boxes.length;
+  }
+
+  boxes.forEach(function (box) {
+    box.addEventListener('change', function () {
+      var state = load();
+      state[box.getAttribute('data-id')] = box.checked;
+      save(state);
+      render();
+    });
+  });
+
+  resetBtn.addEventListener('click', function () {
+    localStorage.removeItem(STORAGE_KEY);
+    render();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,893 @@
+.centered {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.centered.error {
+  color: var(--accent);
+}
+
+.app {
+  padding: 12px;
+  padding-bottom: 76px;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100svh;
+  box-sizing: border-box;
+}
+
+.screen h2 {
+  font-size: 18px;
+  margin: 4px 0 14px;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: -4px 0 12px;
+}
+
+.voice-reply {
+  color: #4caf7d;
+  cursor: pointer;
+}
+
+/* Bottom tab bar */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 6px max(6px, env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom));
+}
+
+.tabbar button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding: 8px 4px;
+  border-radius: 8px;
+}
+
+.tabbar button.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Shared task list rows */
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-list[aria-busy='true'] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.task-row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.task-row-body .task-title {
+  overflow-wrap: anywhere;
+}
+
+.task-row-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.icon-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* "Выполнено" - the one destructive-in-a-good-way action (closes a task
+   or goal), so it gets its own persistent color instead of only tinting
+   on press, and a bit more tap target than the other row icon buttons. */
+.icon-btn.ok {
+  color: #fff;
+  background: #4caf7d;
+  border-color: #4caf7d;
+}
+
+.icon-btn.ok:active {
+  background: color-mix(in srgb, #4caf7d 80%, black);
+}
+
+.icon-btn.danger:active {
+  background: color-mix(in srgb, var(--accent) 25%, var(--bg));
+}
+
+/* Tasks screen */
+.tasks-sticky-header {
+  position: sticky;
+  top: -12px;
+  z-index: 5;
+  background: var(--bg);
+  margin: 0 -12px;
+  padding: 12px 12px 0;
+}
+
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.add-row input {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.add-date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -6px 0 12px;
+}
+
+.add-date-row input[type='date'],
+.add-date-row input[type='time'] {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color-scheme: dark;
+}
+
+.add-date-row input[type='time'] {
+  flex: 0 0 auto;
+  width: 90px;
+}
+
+.add-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  width: 42px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.mic-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mic-btn.recording {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+.mic-btn:disabled {
+  opacity: 0.6;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-btn.recording {
+    animation: none;
+  }
+}
+
+.voice-error {
+  color: var(--accent);
+  font-size: 13px;
+  margin: -4px 0 12px;
+}
+
+/* Sub-tabs inside the Задачи screen (Сегодня/Завтра/Все/Жизнь/Выполненные).
+   Wraps to a second row instead of scrolling horizontally - a scrollable
+   row with no visible scrollbar hid whole tabs from view with nothing
+   telling the user there was more to swipe to (real incident: Профиль and
+   Контакты both went unnoticed this way before being found). Wrapping
+   costs a bit of vertical space but nothing is ever hidden. */
+.sub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.sub-tabs button {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.sub-tabs button.active {
+  color: var(--text);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--card-bg));
+}
+
+/* Focus screen */
+.focus-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.focus-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.focus-card-meta {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0;
+}
+
+.focus-card select,
+.focus-card input,
+.focus-card textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.focus-card textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.focus-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.primary-btn,
+.secondary-btn {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: #fff;
+}
+
+.primary-btn:disabled {
+  opacity: 0.5;
+}
+
+.secondary-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.5;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4px 16px;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.calendar-header button {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding-bottom: 6px;
+}
+
+.calendar-day {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: none;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-day.today {
+  border: 1px solid var(--accent);
+}
+
+.calendar-day.selected {
+  background: var(--accent);
+  color: #fff;
+}
+
+.calendar-dot {
+  position: absolute;
+  bottom: 5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.calendar-day.selected .calendar-dot {
+  background: #fff;
+}
+
+.calendar-day-list,
+.calendar-undated {
+  margin-top: 20px;
+}
+
+.calendar-day-list h3,
+.calendar-undated h3 {
+  text-transform: capitalize;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--text-dim);
+}
+
+/* Day-list/undated rows are now real TaskRow components (.task-list/
+   .task-row, styled globally) so they get the same complete/postpone/
+   delete actions as every other task list - no calendar-specific list/row
+   rules needed here any more. */
+
+.task-mark {
+  color: var(--accent);
+  width: 16px;
+  text-align: center;
+}
+
+.task-time {
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  min-width: 42px;
+}
+
+.task-title {
+  flex: 1;
+}
+
+.empty {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* Task detail sheet - opened by tapping a task row */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+.sheet-card {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  padding: 16px max(16px, env(safe-area-inset-left)) calc(16px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 80svh;
+  overflow-y: auto;
+  cursor: default;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sheet-header h3 {
+  margin: 0;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.task-title-input {
+  flex: 1;
+  margin: 0;
+  font-size: 17px;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 0 0 2px;
+  min-width: 0;
+}
+
+.task-title-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.sheet-card textarea,
+.sheet-card input[type='datetime-local'] {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.sheet-card textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.sheet-card input[type='datetime-local'] {
+  color-scheme: dark;
+}
+
+/* Help sheet (Профиль → «Как пользоваться») */
+.help-card {
+  gap: 4px;
+}
+
+.help-section {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+}
+
+.help-section:last-child {
+  border-bottom: none;
+}
+
+.help-section summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  list-style: none;
+}
+
+.help-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.help-section summary::before {
+  content: '+ ';
+  color: var(--accent);
+}
+
+.help-section[open] summary::before {
+  content: '– ';
+}
+
+.help-answer {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+.help-answer p {
+  margin: 0 0 8px;
+}
+
+.help-answer p:last-child {
+  margin-bottom: 0;
+}
+
+.help-answer ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.help-answer li {
+  margin-bottom: 4px;
+}
+
+/* Chat screen */
+.chat-screen {
+  display: flex;
+  flex-direction: column;
+  height: calc(100svh - 12px - 12px - 76px);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chat-bubble-user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-assistant {
+  align-self: flex-start;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble-pending {
+  color: var(--text-dim);
+}
+
+.chat-input-row {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Login widget (standalone, outside Telegram) */
+.login-screen h2 {
+  margin: 0 0 8px;
+}
+
+.login-widget-slot {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Life goals (Жизнь sub-tab) */
+.life-goal-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -6px 0 12px;
+}
+
+.life-goal-add-row select,
+.life-goal-add-row input[type='month'] {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 13px;
+}
+
+.life-goal-add-row select {
+  flex: 1;
+  min-width: 0;
+}
+
+.life-goal-add-row input[type='month'] {
+  flex-shrink: 0;
+}
+
+.life-goal-group h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin: 14px 0 8px;
+}
+
+.life-goal-group:first-child h3 {
+  margin-top: 0;
+}
+
+.life-goal-done-btn {
+  flex-shrink: 0;
+}
+
+/* Completed goal - kept visible in place (not hidden/removed) so it stays
+   attached to the day/month/year group it belongs to, just visually
+   de-emphasized. */
+.life-goal-done .task-title,
+.row-done .task-title {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.life-goal-done .task-time,
+.row-done .task-time {
+  opacity: 0.55;
+}
+
+/* Reminders */
+.time-input {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  width: 90px;
+}
+
+/* Life balance */
+.life-balance-current {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.life-balance-current h3,
+.tasks-screen h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+/* Fixed layout + name/date columns allowed to wrap - fits the base mobile
+   viewport width without horizontal scroll, unlike a nowrap table that
+   only fit its widest row by scrolling. */
+.admin-users-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.admin-users-table th,
+.admin-users-table td {
+  text-align: left;
+  padding: 6px 6px 6px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: break-word;
+}
+
+.admin-users-table th:last-child,
+.admin-users-table td:last-child {
+  width: 46px;
+  text-align: right;
+  padding-right: 0;
+}
+
+.admin-users-table th:nth-child(2),
+.admin-users-table td:nth-child(2) {
+  width: 58px;
+}
+
+.admin-users-table th:nth-child(3),
+.admin-users-table td:nth-child(3) {
+  width: 52px;
+}
+
+.admin-users-table th {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.admin-users-name-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-users-username {
+  color: var(--text-dim);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.admin-users-username:hover {
+  text-decoration: underline;
+}
+
+.life-balance-row,
+.life-balance-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.life-balance-label {
+  flex: 1;
+  font-size: 13px;
+}
+
+.life-balance-input-row input[type='range'] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.life-balance-value {
+  width: 20px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.life-balance-up {
+  color: #4caf7d;
+}
+
+.life-balance-down {
+  color: var(--accent);
+}
+
+/* Knowledge base */
+.knowledge-title-input {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.tasks-screen textarea {
+  width: 100%;
+  min-height: 80px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.knowledge-search-results {
+  margin-bottom: 16px;
+}
+
+/* Contacts - clickable rows */
+.contacts-row {
+  cursor: pointer;
+}
+
+/* Profile */
+.profile-screen h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin: 0 0 10px;
+}
+
+.theme-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-toggle button {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.theme-toggle button.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}

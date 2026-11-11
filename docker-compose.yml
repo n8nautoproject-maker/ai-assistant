@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ai_assistant
+      POSTGRES_PASSWORD: ai_assistant
+      POSTGRES_DB: ai_assistant_core
+    ports:
+      # 5433 was already taken by an unrelated native process on this
+      # machine (unrelated to this project or другой проект) - using 5434.
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+
+volumes:
+  postgres_data:

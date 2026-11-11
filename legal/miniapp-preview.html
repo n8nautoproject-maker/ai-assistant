@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Превью миниапа — AI Assistant</title>
+<style>
+  /* Exact tokens from frontend/src/index.css */
+  :root {
+    --text: #e5e5ea;
+    --text-dim: #8e8e93;
+    --bg: #0d0d12;
+    --card-bg: #17171d;
+    --border: #2c2c33;
+    --accent: #f26419;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 16px/1.45 system-ui, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    background: #050507;
+    -webkit-font-smoothing: antialiased;
+    padding: 32px 16px;
+  }
+
+  .note {
+    max-width: 900px;
+    margin: 0 auto 24px;
+    color: var(--text-dim);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .phone {
+    width: 280px;
+    background: var(--bg);
+    border-radius: 28px;
+    border: 6px solid #1a1a1e;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+
+  .phone-label {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .phone-inner {
+    padding: 14px 12px 0;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen { flex: 1; }
+
+  .screen h2 {
+    font-size: 17px;
+    margin: 4px 0 12px;
+  }
+
+  .hint {
+    color: var(--text-dim);
+    font-size: 12px;
+    margin: -4px 0 10px;
+  }
+
+  .task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .task-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 10px;
+  }
+
+  .task-mark { color: var(--accent); width: 14px; text-align: center; font-size: 13px; }
+
+  .task-row-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .task-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .task-time { color: var(--text-dim); font-variant-numeric: tabular-nums; font-size: 12px; }
+
+  .task-row-actions { display: flex; gap: 3px; flex-shrink: 0; }
+
+  .icon-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    font-size: 11px;
+    line-height: 1;
+  }
+  .icon-btn.active { color: var(--accent); border-color: var(--accent); }
+
+  /* Tasks screen */
+  .add-row { display: flex; gap: 6px; margin-bottom: 10px; }
+  .add-row input {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 9px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .add-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    width: 34px;
+    font-size: 17px;
+  }
+  .sub-tabs { display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; }
+  .sub-tabs span {
+    flex-shrink: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .sub-tabs span.active {
+    color: var(--text);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--card-bg));
+  }
+
+  /* Calendar */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 2px 10px;
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .calendar-header span.nav {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 14px;
+  }
+  .calendar-weekday { text-align: center; color: var(--text-dim); font-size: 9px; padding-bottom: 3px; }
+  .calendar-day {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .calendar-day.today { border: 1px solid var(--accent); }
+  .calendar-day.selected { background: var(--accent); color: #fff; }
+  .calendar-dot {
+    position: absolute;
+    bottom: 2px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .calendar-day.selected .calendar-dot { background: #fff; }
+  .calendar-day-list h3, .calendar-undated h3 {
+    text-transform: capitalize;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: var(--text-dim);
+  }
+  .calendar-undated { margin-top: 14px; }
+
+  /* Focus */
+  .focus-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .field-label { font-size: 11px; color: var(--text-dim); }
+  .focus-card select, .focus-card input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 7px;
+    padding: 7px 9px;
+    font-size: 13px;
+  }
+  .primary-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* Tab bar */
+  .tabbar {
+    display: flex;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    margin: 14px -12px 0;
+    padding: 6px 6px;
+  }
+  .tabbar span {
+    flex: 1;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 11px;
+    padding: 6px 2px;
+  }
+  .tabbar span.active { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<p class="note">Не живой скриншот (техническое ограничение сессии — панель предпросмотра не рендерилась), но точная реконструкция: те же CSS-классы и переменные из frontend/src/App.css, реальные данные, подтверждённые вживую в этом же прогоне. Обновлено под новую структуру — один таб «Задачи» с подвкладками по датам.</p>
+
+<div class="phones">
+
+  <div>
+    <p class="phone-label">Задачи → Сегодня</p>
+    <div class="phone"><div class="phone-inner">
+      <div class="screen">
+        <h2>Задачи</h2>
+        <div class="add-row"><input placeholder="Новая задача…" disabled><span class="add-btn">+</span></div>
+        <div class="sub-tabs">
+          <span class="active">Сегодня</span><span>Завтра</span><span>Жизнь</span><span>Выполненные</span>
+        </div>
+        <ul class="task-list">
+          <li class="task-row">
+            <span class="task-mark">○</span>
+            <div class="task-row-body"><span class="task-title">Позвонить клиенту</span><span class="task-time">17:00</span></div>
+            <div class="task-row-actions">
+              <span class="icon-btn active">★</span>
+              <span class="icon-btn">→</span>
+              <span class="icon-btn">✓</span>
+              <span class="icon-btn">✕</span>
+            </div>
+          </li>
+          <li class="task-row">
+            <span class="task-mark">○</span>
+            <div class="task-row-body"><span class="task-title">Сделать отчёт</span><span class="task-time">21:30</span></div>
+            <div class="task-row-actions">
+              <span class="icon-btn">☆</span>
+              <span class="icon-btn">→</span>
+              <span class="icon-btn">✓</span>
+              <span class="icon-btn">✕</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="tabbar">
+        <span class="active">Задачи</span><span>Календарь</span><span>Фокус</span>
+      </div>
+    </div></div>
+  </div>
+
+  <div>
+    <p class="phone-label">Задачи → Жизнь</p>
+    <div class="phone"><div class="phone-inner">
+      <div class="screen">
+        <h2>Задачи</h2>
+        <div class="add-row"><input placeholder="Новая задача…" disabled><span class="add-btn">+</span></div>
+        <div class="sub-tabs">
+          <span>Сегодня</span><span>Завтра</span><span class="active">Жизнь</span><span>Выполненные</span>
+        </div>
+        <ul class="task-list">
+          <li class="task-row">
+            <span class="task-mark">○</span>
+            <div class="task-row-body"><span class="task-title">Изучить договор с банком</span></div>
+            <div class="task-row-actions"><span class="icon-btn">→</span><span class="icon-btn">✓</span><span class="icon-btn">✕</span></div>
+          </li>
+          <li class="task-row">
+            <span class="task-mark">○</span>
+            <div class="task-row-body"><span class="task-title">Купить продукты</span></div>
+            <div class="task-row-actions"><span class="icon-btn">→</span><span class="icon-btn">✓</span><span class="icon-btn">✕</span></div>
+          </li>
+          <li class="task-row">
+            <span class="task-mark">○</span>
+            <div class="task-row-body"><span class="task-title">Задача на следующей неделе</span></div>
+            <div class="task-row-actions"><span class="icon-btn">→</span><span class="icon-btn">✓</span><span class="icon-btn">✕</span></div>
+          </li>
+        </ul>
+      </div>
+      <div class="tabbar">
+        <span class="active">Задачи</span><span>Календарь</span><span>Фокус</span>
+      </div>
+    </div></div>
+  </div>
+
+  <div>
+    <p class="phone-label">Календарь</p>
+    <div class="phone"><div class="phone-inner">
+      <div class="screen">
+        <div class="calendar-header"><span class="nav">‹</span><span>Июль 2026 г.</span><span class="nav">›</span></div>
+        <div class="calendar-grid">
+          <div class="calendar-weekday">Пн</div><div class="calendar-weekday">Вт</div><div class="calendar-weekday">Ср</div><div class="calendar-weekday">Чт</div><div class="calendar-weekday">Пт</div><div class="calendar-weekday">Сб</div><div class="calendar-weekday">Вс</div>
+          <div></div><div></div><div class="calendar-day">1</div><div class="calendar-day">2</div><div class="calendar-day">3</div><div class="calendar-day">4</div><div class="calendar-day">5</div>
+          <div class="calendar-day">6</div><div class="calendar-day">7</div><div class="calendar-day">8</div><div class="calendar-day">9</div><div class="calendar-day">10</div><div class="calendar-day">11</div><div class="calendar-day">12</div>
+          <div class="calendar-day">13</div><div class="calendar-day">14</div><div class="calendar-day">15</div><div class="calendar-day">16</div><div class="calendar-day">17</div><div class="calendar-day">18</div><div class="calendar-day">19</div>
+          <div class="calendar-day">20</div><div class="calendar-day">21</div><div class="calendar-day">22</div><div class="calendar-day">23</div><div class="calendar-day">24</div><div class="calendar-day">25</div><div class="calendar-day">26</div>
+          <div class="calendar-day">27</div><div class="calendar-day">28</div><div class="calendar-day today selected">29<span class="calendar-dot"></span></div><div class="calendar-day">30<span class="calendar-dot"></span></div><div class="calendar-day">31</div><div></div><div></div>
+        </div>
+        <div class="calendar-day-list">
+          <h3>Среда, 29 июля</h3>
+          <ul class="task-list">
+            <li class="task-row"><span class="task-mark">✓</span><div class="task-row-body"><span class="task-time">12:00</span><span class="task-title">Проверить почту</span></div></li>
+            <li class="task-row"><span class="task-mark">○</span><div class="task-row-body"><span class="task-time">17:00</span><span class="task-title">Позвонить клиенту</span></div></li>
+            <li class="task-row"><span class="task-mark">○</span><div class="task-row-body"><span class="task-time">21:30</span><span class="task-title">Сделать отчёт</span></div></li>
+          </ul>
+        </div>
+        <div class="calendar-undated">
+          <h3>Без даты</h3>
+          <ul class="task-list">
+            <li class="task-row"><span class="task-mark">○</span><div class="task-row-body"><span class="task-title">Купить продукты</span></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="tabbar">
+        <span>Задачи</span><span class="active">Календарь</span><span>Фокус</span>
+      </div>
+    </div></div>
+  </div>
+
+  <div>
+    <p class="phone-label">Фокус</p>
+    <div class="phone"><div class="phone-inner">
+      <div class="screen">
+        <h2>Фокус</h2>
+        <div class="focus-card">
+          <label class="field-label">Задача (необязательно)</label>
+          <select disabled>
+            <option>Без привязки к задаче</option>
+          </select>
+          <label class="field-label">Длительность, мин</label>
+          <input value="90" disabled>
+          <span class="primary-btn">Начать</span>
+        </div>
+      </div>
+      <div class="tabbar">
+        <span>Задачи</span><span>Календарь</span><span class="active">Фокус</span>
+      </div>
+    </div></div>
+  </div>
+
+</div>
+</body>
+</html>
